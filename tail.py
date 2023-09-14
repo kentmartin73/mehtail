@@ -1,18 +1,19 @@
 import subprocess
 import sys
 from datetime import datetime, timedelta
+import shlex
 
 class Tailer:
     def __init__(self, command, maxsize=float("inf"), maxtime=timedelta.max):
         self.maxsize = maxsize
         self.maxtime = maxtime
-        self.command = command
+        self.command = shlex.split(command)
         self.chunk = bytearray()
         if self.maxsize == float("inf") and self.maxtime == timedelta.max:
             raise Exception("maxsize or maxtime must be set")
 
     def run(self):
-        process = subprocess.Popen(command, stdout=subprocess.PIPE)
+        process = subprocess.Popen(self.command, stdout=subprocess.PIPE)
         self.lastsent = datetime.now()
         while True:
             output = process.stdout.read(1)
@@ -37,8 +38,8 @@ class Tailer:
             self.lastsent = datetime.now()
     
     
-
-command = ["tail", "-f", "/tmp/0"]
+command = "tail -f /tmp/0"
+# command = ["tail", "-f", "/tmp/0"]
 # t = Tailer(command, maxsize=4, maxtime=timedelta(seconds=2))
 # t = Tailer(command, maxsize=8)
 t = Tailer(command, maxtime=timedelta(seconds=2))
