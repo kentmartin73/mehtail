@@ -10,8 +10,6 @@ class Tailer:
         self.command = shlex.split(command)
         self.func = func
         self.chunk = bytearray()
-        if self.maxsize == float("inf") and self.maxtime == timedelta.max:
-            raise Exception("maxsize or maxtime must be set")
 
     def run(self):
         process = subprocess.Popen(self.command, stdout=subprocess.PIPE)
